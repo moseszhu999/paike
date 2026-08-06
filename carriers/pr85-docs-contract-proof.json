@@ -1,0 +1,50 @@
+{
+  "schema": "opaque.private_exact_head_carrier.v1",
+  "profile": "docs-contract-exact-head",
+  "carrier_sequence": 2,
+  "target": {
+    "private_repository": true,
+    "base_sha": "0ae5230c7f4d2f5b447c7a3f99307455add80c62",
+    "head_sha": "f1132331bce2b01b1bb56a9bfd5f67b1e2b5c29c",
+    "changed_file_count": 2,
+    "ahead_by": 1,
+    "behind_by": 0
+  },
+  "file_bindings": [
+    {
+      "path_commitment_sha256": "97d558eeb5e9208ec78f54365649ec34cf30e81d2e7fa165328600817d124367",
+      "git_blob_sha1": "6e555c8fbcded5483421959ed39b2543e66d7520"
+    },
+    {
+      "path_commitment_sha256": "2bc4522d2acf81514d59767da4705d7d448fb697f238469d63d43f226a9f918c",
+      "git_blob_sha1": "41838f9e6e16bdf32bad91b19a83ddc02feac076"
+    }
+  ],
+  "safety": {
+    "public_payload_contains_private_source": false,
+    "public_payload_contains_raw_data": false,
+    "public_payload_contains_credentials": false,
+    "production_behavior_changed": false,
+    "wallet_changed": false,
+    "orders_changed": false,
+    "positions_changed": false,
+    "candidate_effects_read": false,
+    "strategy_imports": 0,
+    "trade_ledger_reads": 0
+  },
+  "immutable_authority": {
+    "run_id": 31106301486,
+    "artifact_id": 8969800713,
+    "artifact_zip_digest": "sha256:5792b43546171dd414dacbb6b48a7f8dec4527dd5dae285cedbd7455cc190d4f"
+  },
+  "observed_contract": {
+    "proxy_stems": 17,
+    "behavior_axes": 6,
+    "horizons": 4,
+    "proxy_fields": 68,
+    "input_rows": 144,
+    "complete_profiles": 140,
+    "core_complete_micro_missing": 4,
+    "incomplete_core_profiles": 0
+  }
+}
