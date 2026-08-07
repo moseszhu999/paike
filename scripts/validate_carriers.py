@@ -124,6 +124,8 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("observed contract counts drifted")
 
     for key in _walk_keys(payload):
+        if key in REQUIRED_FALSE:
+            continue
         lowered = key.lower()
         if any(part in lowered for part in FORBIDDEN_KEY_PARTS):
             raise ValueError(f"forbidden key in public carrier: {key}")
