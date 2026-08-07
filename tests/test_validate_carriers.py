@@ -58,7 +58,7 @@ VALID = {
         "artifact_id": 2,
         "artifact_zip_digest": "sha256:" + "6" * 64,
     },
-    "observed_contract": BEHAVIOR_OBSERVED,
+    "observed_contract": deepcopy(BEHAVIOR_OBSERVED),
 }
 
 
@@ -79,14 +79,14 @@ def content_equivalent(profile: str, observed: dict):
             "implementation_blob_count": 4,
         }
     )
-    payload["observed_contract"] = observed
+    payload["observed_contract"] = deepcopy(observed)
     return payload
 
 
 def calibration_docs():
     payload = deepcopy(VALID)
     payload["profile"] = "calibration-docs-contract-exact-head"
-    payload["observed_contract"] = CALIBRATION_OBSERVED
+    payload["observed_contract"] = deepcopy(CALIBRATION_OBSERVED)
     return payload
 
 
