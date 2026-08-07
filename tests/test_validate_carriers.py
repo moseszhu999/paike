@@ -49,11 +49,43 @@ VALID = {
 }
 
 
+def code_valid():
+    payload = deepcopy(VALID)
+    payload["profile"] = "code-fourfile-content-equivalent-exact-head"
+    payload["target"]["changed_file_count"] = 4
+    payload["file_bindings"] = [
+        {"path_commitment_sha256": "2" * 64, "git_blob_sha1": "3" * 40},
+        {"path_commitment_sha256": "4" * 64, "git_blob_sha1": "5" * 40},
+        {"path_commitment_sha256": "6" * 64, "git_blob_sha1": "7" * 40},
+        {"path_commitment_sha256": "8" * 64, "git_blob_sha1": "9" * 40},
+    ]
+    payload["immutable_authority"].update(
+        {
+            "source_exact_head_sha": "a" * 40,
+            "implementation_blobs_unchanged": True,
+            "implementation_blob_count": 4,
+        }
+    )
+    return payload
+
+
 class CarrierValidationTests(unittest.TestCase):
     def test_valid_payload_passes(self):
         receipt = validate_payload(deepcopy(VALID))
         self.assertEqual(receipt["status"], "PASS")
         self.assertEqual(receipt["target_head_sha"], "1" * 40)
+
+    def test_valid_code_payload_passes(self):
+        receipt = validate_payload(code_valid())
+        self.assertEqual(receipt["status"], "PASS")
+        self.assertEqual(receipt["changed_file_count"], 4)
+        self.assertEqual(receipt["opaque_file_bindings"], 4)
+
+    def test_rejects_code_blob_equivalence_false(self):
+        payload = code_valid()
+        payload["immutable_authority"]["implementation_blobs_unchanged"] = False
+        with self.assertRaisesRegex(ValueError, "must be true"):
+            validate_payload(payload)
 
     def test_rejects_duplicate_blob_binding(self):
         payload = deepcopy(VALID)
