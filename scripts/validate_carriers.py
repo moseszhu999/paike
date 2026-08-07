@@ -32,6 +32,10 @@ REQUIRED_FALSE = (
     "positions_changed",
     "candidate_effects_read",
 )
+PROFILE_FILE_COUNTS = {
+    "docs-contract-exact-head": 2,
+    "code-fourfile-content-equivalent-exact-head": 4,
+}
 
 
 def _walk_keys(value: Any) -> list[str]:
@@ -49,8 +53,10 @@ def _walk_keys(value: Any) -> list[str]:
 def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema") != "opaque.private_exact_head_carrier.v1":
         raise ValueError("unexpected schema")
-    if payload.get("profile") != "docs-contract-exact-head":
+    profile = payload.get("profile")
+    if profile not in PROFILE_FILE_COUNTS:
         raise ValueError("unexpected profile")
+    expected_file_count = PROFILE_FILE_COUNTS[profile]
 
     target = payload.get("target")
     if not isinstance(target, dict):
@@ -65,14 +71,14 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("base and head must differ")
     if target.get("private_repository") is not True:
         raise ValueError("target must be marked private")
-    if target.get("changed_file_count") != 2:
-        raise ValueError("docs-contract carrier requires exactly two changed files")
+    if target.get("changed_file_count") != expected_file_count:
+        raise ValueError(f"{profile} requires exactly {expected_file_count} changed files")
     if target.get("ahead_by") != 1 or target.get("behind_by") != 0:
         raise ValueError("unexpected lineage")
 
     bindings = payload.get("file_bindings")
-    if not isinstance(bindings, list) or len(bindings) != 2:
-        raise ValueError("exactly two opaque file bindings are required")
+    if not isinstance(bindings, list) or len(bindings) != expected_file_count:
+        raise ValueError(f"exactly {expected_file_count} opaque file bindings are required")
     path_commitments: set[str] = set()
     blob_shas: set[str] = set()
     for binding in bindings:
@@ -86,7 +92,7 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("invalid git blob sha1")
         path_commitments.add(path_commitment)
         blob_shas.add(blob_sha)
-    if len(path_commitments) != 2 or len(blob_shas) != 2:
+    if len(path_commitments) != expected_file_count or len(blob_shas) != expected_file_count:
         raise ValueError("file bindings must be unique")
 
     safety = payload.get("safety")
@@ -108,6 +114,15 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     digest = authority.get("artifact_zip_digest")
     if not isinstance(digest, str) or not SHA256.fullmatch(digest):
         raise ValueError("invalid artifact digest")
+
+    if profile == "code-fourfile-content-equivalent-exact-head":
+        source_head = authority.get("source_exact_head_sha")
+        if not isinstance(source_head, str) or not HEX40.fullmatch(source_head):
+            raise ValueError("invalid source_exact_head_sha")
+        if authority.get("implementation_blobs_unchanged") is not True:
+            raise ValueError("implementation_blobs_unchanged must be true")
+        if authority.get("implementation_blob_count") != expected_file_count:
+            raise ValueError("implementation_blob_count drifted")
 
     observed = payload.get("observed_contract")
     expected = {
@@ -134,12 +149,12 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema": "opaque.private_exact_head_carrier_receipt.v1",
         "status": "PASS",
-        "profile": payload["profile"],
+        "profile": profile,
         "target_head_sha": head_sha,
         "target_base_sha": base_sha,
         "carrier_payload_sha256": hashlib.sha256(canonical).hexdigest(),
-        "changed_file_count": 2,
-        "opaque_file_bindings": 2,
+        "changed_file_count": expected_file_count,
+        "opaque_file_bindings": expected_file_count,
         "private_source_present": False,
         "raw_data_present": False,
         "credentials_present": False,
