@@ -32,9 +32,51 @@ REQUIRED_FALSE = (
     "positions_changed",
     "candidate_effects_read",
 )
-PROFILE_FILE_COUNTS = {
-    "docs-contract-exact-head": 2,
-    "code-fourfile-content-equivalent-exact-head": 4,
+
+PROFILE_OBSERVED = {
+    "behavior-profile": {
+        "proxy_stems": 17,
+        "behavior_axes": 6,
+        "horizons": 4,
+        "proxy_fields": 68,
+        "input_rows": 144,
+        "complete_profiles": 140,
+        "core_complete_micro_missing": 4,
+        "incomplete_core_profiles": 0,
+    },
+    "behavior-calibration": {
+        "calibration_cells": 272,
+        "eligible_core": 204,
+        "eligible_micro": 68,
+        "insufficient_reference": 0,
+        "zero_variance": 0,
+        "tied_cutpoints": 8,
+        "field_positions": 9792,
+        "core_coherence_rows": 2448,
+    },
+}
+
+PROFILE_SPECS = {
+    "docs-contract-exact-head": {
+        "file_count": 2,
+        "observed_key": "behavior-profile",
+        "requires_content_equivalence": False,
+    },
+    "code-fourfile-content-equivalent-exact-head": {
+        "file_count": 4,
+        "observed_key": "behavior-profile",
+        "requires_content_equivalence": True,
+    },
+    "calibration-docs-contract-exact-head": {
+        "file_count": 2,
+        "observed_key": "behavior-calibration",
+        "requires_content_equivalence": False,
+    },
+    "calibration-code-fourfile-content-equivalent-exact-head": {
+        "file_count": 4,
+        "observed_key": "behavior-calibration",
+        "requires_content_equivalence": True,
+    },
 }
 
 
@@ -54,9 +96,10 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema") != "opaque.private_exact_head_carrier.v1":
         raise ValueError("unexpected schema")
     profile = payload.get("profile")
-    if profile not in PROFILE_FILE_COUNTS:
+    spec = PROFILE_SPECS.get(profile)
+    if spec is None:
         raise ValueError("unexpected profile")
-    expected_file_count = PROFILE_FILE_COUNTS[profile]
+    expected_file_count = spec["file_count"]
 
     target = payload.get("target")
     if not isinstance(target, dict):
@@ -115,7 +158,7 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(digest, str) or not SHA256.fullmatch(digest):
         raise ValueError("invalid artifact digest")
 
-    if profile == "code-fourfile-content-equivalent-exact-head":
+    if spec["requires_content_equivalence"]:
         source_head = authority.get("source_exact_head_sha")
         if not isinstance(source_head, str) or not HEX40.fullmatch(source_head):
             raise ValueError("invalid source_exact_head_sha")
@@ -125,17 +168,8 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("implementation_blob_count drifted")
 
     observed = payload.get("observed_contract")
-    expected = {
-        "proxy_stems": 17,
-        "behavior_axes": 6,
-        "horizons": 4,
-        "proxy_fields": 68,
-        "input_rows": 144,
-        "complete_profiles": 140,
-        "core_complete_micro_missing": 4,
-        "incomplete_core_profiles": 0,
-    }
-    if observed != expected:
+    expected_observed = PROFILE_OBSERVED[spec["observed_key"]]
+    if observed != expected_observed:
         raise ValueError("observed contract counts drifted")
 
     for key in _walk_keys(payload):
