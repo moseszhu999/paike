@@ -1,7 +1,7 @@
 {
   "schema": "opaque.private_exact_head_carrier.v1",
   "profile": "docs-contract-exact-head",
-  "carrier_sequence": 1,
+  "carrier_sequence": 2,
   "target": {
     "private_repository": true,
     "base_sha": "10befbf7bca31f52ce20e334dd34ce99ac445051",
@@ -38,10 +38,13 @@
     "artifact_zip_digest": "sha256:a8b0e9ec7dad83c333757db1f96a5c1a6662595a3c77c9f2ae7a6ca399d5e93b"
   },
   "observed_contract": {
-    "stage_count": 6,
-    "changed_files": 2,
-    "allowed_candidate_actions": 1,
-    "maximum_candidates": 3,
-    "forbidden_production_mutations": 1
+    "proxy_stems": 17,
+    "behavior_axes": 6,
+    "horizons": 4,
+    "proxy_fields": 68,
+    "input_rows": 144,
+    "complete_profiles": 140,
+    "core_complete_micro_missing": 4,
+    "incomplete_core_profiles": 0
   }
 }
