@@ -1,0 +1,60 @@
+{
+  "file_bindings": [
+    {
+      "git_blob_sha1": "30b702415e8d7de7550ec96edabbf6bb8f8db5c3",
+      "path_commitment_sha256": "2e006c8e454780717b1cde0e869087bebb0156e5aba37a6d45ce9e038c42d589"
+    },
+    {
+      "git_blob_sha1": "802a2be62708ad23d3f400b750e9e9662dd938e9",
+      "path_commitment_sha256": "42c095f991372d7d478cb9f709d5dfe15c3f484131211cb7abce0644a2f7c910"
+    },
+    {
+      "git_blob_sha1": "7ffdfd3994c9c6661e905a7f17f892000975a324",
+      "path_commitment_sha256": "67ad6f9aefb59986539846d81b0b3e4734438d6253236666279ca234f666ec33"
+    },
+    {
+      "git_blob_sha1": "a79860435e91bbe7bb4a156ad3617dd7044a5d74",
+      "path_commitment_sha256": "35672b77cf52dd301feb58e916a12692ce489c9728bdd94e6f47171c35990694"
+    }
+  ],
+  "immutable_authority": {
+    "artifact_id": 8969800713,
+    "artifact_zip_digest": "sha256:5792b43546171dd414dacbb6b48a7f8dec4527dd5dae285cedbd7455cc190d4f",
+    "implementation_blob_count": 4,
+    "implementation_blobs_unchanged": true,
+    "run_id": 31106301486,
+    "source_exact_head_sha": "66fc1d5c02d9a7216808541920ea8d27aa97f5bd"
+  },
+  "observed_contract": {
+    "behavior_axes": 6,
+    "complete_profiles": 140,
+    "core_complete_micro_missing": 4,
+    "horizons": 4,
+    "incomplete_core_profiles": 0,
+    "input_rows": 144,
+    "proxy_fields": 68,
+    "proxy_stems": 17
+  },
+  "profile": "code-fourfile-content-equivalent-exact-head",
+  "safety": {
+    "candidate_effects_read": false,
+    "orders_changed": false,
+    "positions_changed": false,
+    "production_behavior_changed": false,
+    "public_payload_contains_credentials": false,
+    "public_payload_contains_private_source": false,
+    "public_payload_contains_raw_data": false,
+    "strategy_imports": 0,
+    "trade_ledger_reads": 0,
+    "wallet_changed": false
+  },
+  "schema": "opaque.private_exact_head_carrier.v1",
+  "target": {
+    "ahead_by": 1,
+    "base_sha": "fe47933f32e0b3f1655b433c6413f9ee3703d4e5",
+    "behind_by": 0,
+    "changed_file_count": 4,
+    "head_sha": "8af14274f35260597579b7a1fdc2712bb7d38af9",
+    "private_repository": true
+  }
+}

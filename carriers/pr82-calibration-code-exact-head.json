@@ -1,0 +1,60 @@
+{
+  "file_bindings": [
+    {
+      "git_blob_sha1": "294af7825449e273ab17c01ef44fd01e580930fb",
+      "path_commitment_sha256": "17a23024039156b82ff0cb7a12658012a09c6cf8a5bb5928d0c3c0d70ae4457c"
+    },
+    {
+      "git_blob_sha1": "d5df7faba4159995754f86ab40f9e868338a397f",
+      "path_commitment_sha256": "adad4a0587bce0619a32519a9c0a0624f7bf6d158f205f8146705eafcc70b3bd"
+    },
+    {
+      "git_blob_sha1": "f2dec0d92e008d38f16fba4ae6c5b4cb3ed8bbb4",
+      "path_commitment_sha256": "4bd28aa8f146287b3f7436c2f3df1c0edff3948cd3e5d48147ff5ea9644fc84b"
+    },
+    {
+      "git_blob_sha1": "1f4db622a7a6944287d70c4f686d8f539e983504",
+      "path_commitment_sha256": "8c07eed28d1e8e9cf766a8a3c0c68df9073d04a2058df4d01d58c57e26303065"
+    }
+  ],
+  "immutable_authority": {
+    "artifact_id": 8970678747,
+    "artifact_zip_digest": "sha256:a8b0e9ec7dad83c333757db1f96a5c1a6662595a3c77c9f2ae7a6ca399d5e93b",
+    "implementation_blob_count": 4,
+    "implementation_blobs_unchanged": true,
+    "run_id": 31108226516,
+    "source_exact_head_sha": "9533457ebd215968a13949b0b0f5a9e04cc04de7"
+  },
+  "observed_contract": {
+    "calibration_cells": 272,
+    "core_coherence_rows": 2448,
+    "eligible_core": 204,
+    "eligible_micro": 68,
+    "field_positions": 9792,
+    "insufficient_reference": 0,
+    "tied_cutpoints": 8,
+    "zero_variance": 0
+  },
+  "profile": "calibration-code-fourfile-content-equivalent-exact-head",
+  "safety": {
+    "candidate_effects_read": false,
+    "orders_changed": false,
+    "positions_changed": false,
+    "production_behavior_changed": false,
+    "public_payload_contains_credentials": false,
+    "public_payload_contains_private_source": false,
+    "public_payload_contains_raw_data": false,
+    "strategy_imports": 0,
+    "trade_ledger_reads": 0,
+    "wallet_changed": false
+  },
+  "schema": "opaque.private_exact_head_carrier.v1",
+  "target": {
+    "ahead_by": 1,
+    "base_sha": "ad5e8cc221d5d1e6959b3389c36c2f887f926be9",
+    "behind_by": 0,
+    "changed_file_count": 4,
+    "head_sha": "d154ac0573f3f5052857ab5771ed3437ee9cd922",
+    "private_repository": true
+  }
+}

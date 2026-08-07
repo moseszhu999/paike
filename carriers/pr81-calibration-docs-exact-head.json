@@ -1,0 +1,49 @@
+{
+  "file_bindings": [
+    {
+      "git_blob_sha1": "3d76ef183f067a14a201971a38aa3cb7a1ce92b2",
+      "path_commitment_sha256": "5bc70f42ed8cf8dd969e17c9b81ad52d60abc4a0ca4ae1573e31b56fa8b3a596"
+    },
+    {
+      "git_blob_sha1": "71548743245e7d8634b97290e7d4f746bec0dc78",
+      "path_commitment_sha256": "043096c508e8bcd7cefde2623ddfd25f0afee72c40ca76b08fbab369e6e779dc"
+    }
+  ],
+  "immutable_authority": {
+    "artifact_id": 8969800713,
+    "artifact_zip_digest": "sha256:5792b43546171dd414dacbb6b48a7f8dec4527dd5dae285cedbd7455cc190d4f",
+    "run_id": 31106301486
+  },
+  "observed_contract": {
+    "calibration_cells": 272,
+    "core_coherence_rows": 2448,
+    "eligible_core": 204,
+    "eligible_micro": 68,
+    "field_positions": 9792,
+    "insufficient_reference": 0,
+    "tied_cutpoints": 8,
+    "zero_variance": 0
+  },
+  "profile": "calibration-docs-contract-exact-head",
+  "safety": {
+    "candidate_effects_read": false,
+    "orders_changed": false,
+    "positions_changed": false,
+    "production_behavior_changed": false,
+    "public_payload_contains_credentials": false,
+    "public_payload_contains_private_source": false,
+    "public_payload_contains_raw_data": false,
+    "strategy_imports": 0,
+    "trade_ledger_reads": 0,
+    "wallet_changed": false
+  },
+  "schema": "opaque.private_exact_head_carrier.v1",
+  "target": {
+    "ahead_by": 1,
+    "base_sha": "bdfb753d83432cc0b001d8120a51f66a81f76e9a",
+    "behind_by": 0,
+    "changed_file_count": 2,
+    "head_sha": "09f5a620c92e5b37aacdc8cabe2d6c8ea8862a1d",
+    "private_repository": true
+  }
+}

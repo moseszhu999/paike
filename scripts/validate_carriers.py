@@ -33,6 +33,52 @@ REQUIRED_FALSE = (
     "candidate_effects_read",
 )
 
+PROFILE_OBSERVED = {
+    "behavior-profile": {
+        "proxy_stems": 17,
+        "behavior_axes": 6,
+        "horizons": 4,
+        "proxy_fields": 68,
+        "input_rows": 144,
+        "complete_profiles": 140,
+        "core_complete_micro_missing": 4,
+        "incomplete_core_profiles": 0,
+    },
+    "behavior-calibration": {
+        "calibration_cells": 272,
+        "eligible_core": 204,
+        "eligible_micro": 68,
+        "insufficient_reference": 0,
+        "zero_variance": 0,
+        "tied_cutpoints": 8,
+        "field_positions": 9792,
+        "core_coherence_rows": 2448,
+    },
+}
+
+PROFILE_SPECS = {
+    "docs-contract-exact-head": {
+        "file_count": 2,
+        "observed_key": "behavior-profile",
+        "requires_content_equivalence": False,
+    },
+    "code-fourfile-content-equivalent-exact-head": {
+        "file_count": 4,
+        "observed_key": "behavior-profile",
+        "requires_content_equivalence": True,
+    },
+    "calibration-docs-contract-exact-head": {
+        "file_count": 2,
+        "observed_key": "behavior-calibration",
+        "requires_content_equivalence": False,
+    },
+    "calibration-code-fourfile-content-equivalent-exact-head": {
+        "file_count": 4,
+        "observed_key": "behavior-calibration",
+        "requires_content_equivalence": True,
+    },
+}
+
 
 def _walk_keys(value: Any) -> list[str]:
     keys: list[str] = []
@@ -49,8 +95,11 @@ def _walk_keys(value: Any) -> list[str]:
 def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema") != "opaque.private_exact_head_carrier.v1":
         raise ValueError("unexpected schema")
-    if payload.get("profile") != "docs-contract-exact-head":
+    profile = payload.get("profile")
+    spec = PROFILE_SPECS.get(profile)
+    if spec is None:
         raise ValueError("unexpected profile")
+    expected_file_count = spec["file_count"]
 
     target = payload.get("target")
     if not isinstance(target, dict):
@@ -65,14 +114,14 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("base and head must differ")
     if target.get("private_repository") is not True:
         raise ValueError("target must be marked private")
-    if target.get("changed_file_count") != 2:
-        raise ValueError("docs-contract carrier requires exactly two changed files")
+    if target.get("changed_file_count") != expected_file_count:
+        raise ValueError(f"{profile} requires exactly {expected_file_count} changed files")
     if target.get("ahead_by") != 1 or target.get("behind_by") != 0:
         raise ValueError("unexpected lineage")
 
     bindings = payload.get("file_bindings")
-    if not isinstance(bindings, list) or len(bindings) != 2:
-        raise ValueError("exactly two opaque file bindings are required")
+    if not isinstance(bindings, list) or len(bindings) != expected_file_count:
+        raise ValueError(f"exactly {expected_file_count} opaque file bindings are required")
     path_commitments: set[str] = set()
     blob_shas: set[str] = set()
     for binding in bindings:
@@ -86,7 +135,7 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("invalid git blob sha1")
         path_commitments.add(path_commitment)
         blob_shas.add(blob_sha)
-    if len(path_commitments) != 2 or len(blob_shas) != 2:
+    if len(path_commitments) != expected_file_count or len(blob_shas) != expected_file_count:
         raise ValueError("file bindings must be unique")
 
     safety = payload.get("safety")
@@ -109,18 +158,18 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(digest, str) or not SHA256.fullmatch(digest):
         raise ValueError("invalid artifact digest")
 
+    if spec["requires_content_equivalence"]:
+        source_head = authority.get("source_exact_head_sha")
+        if not isinstance(source_head, str) or not HEX40.fullmatch(source_head):
+            raise ValueError("invalid source_exact_head_sha")
+        if authority.get("implementation_blobs_unchanged") is not True:
+            raise ValueError("implementation_blobs_unchanged must be true")
+        if authority.get("implementation_blob_count") != expected_file_count:
+            raise ValueError("implementation_blob_count drifted")
+
     observed = payload.get("observed_contract")
-    expected = {
-        "proxy_stems": 17,
-        "behavior_axes": 6,
-        "horizons": 4,
-        "proxy_fields": 68,
-        "input_rows": 144,
-        "complete_profiles": 140,
-        "core_complete_micro_missing": 4,
-        "incomplete_core_profiles": 0,
-    }
-    if observed != expected:
+    expected_observed = PROFILE_OBSERVED[spec["observed_key"]]
+    if observed != expected_observed:
         raise ValueError("observed contract counts drifted")
 
     for key in _walk_keys(payload):
@@ -134,12 +183,12 @@ def validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema": "opaque.private_exact_head_carrier_receipt.v1",
         "status": "PASS",
-        "profile": payload["profile"],
+        "profile": profile,
         "target_head_sha": head_sha,
         "target_base_sha": base_sha,
         "carrier_payload_sha256": hashlib.sha256(canonical).hexdigest(),
-        "changed_file_count": 2,
-        "opaque_file_bindings": 2,
+        "changed_file_count": expected_file_count,
+        "opaque_file_bindings": expected_file_count,
         "private_source_present": False,
         "raw_data_present": False,
         "credentials_present": False,
