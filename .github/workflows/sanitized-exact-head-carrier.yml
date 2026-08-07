@@ -40,9 +40,12 @@ jobs:
         run: |
           set -euo pipefail
           test "$(find carriers -type f -name '*.json' | wc -l | tr -d ' ')" -ge 1
-          ! grep -RIE --exclude='*.pyc' --exclude-dir='__pycache__' \
-            '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|HYPERLIQUID_(PRIVATE|SECRET)_KEY|TELEGRAM_BOT_TOKEN|api[_-]?key[[:space:]]*[:=][[:space:]]*["'"'][^"'"']+)' \
-            carriers scripts tests
+          if grep -RIE --exclude='*.pyc' --exclude-dir='__pycache__' \
+            '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|HYPERLIQUID_(PRIVATE|SECRET)_KEY|TELEGRAM_BOT_TOKEN|api[_-]?key[[:space:]]*[:=])' \
+            carriers scripts tests; then
+            echo "forbidden sensitive payload class detected" >&2
+            exit 1
+          fi
 
       - name: Upload immutable sanitized receipt
         uses: actions/upload-artifact@v4
